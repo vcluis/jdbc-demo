@@ -21,35 +21,34 @@ import com.example.DBConn;
 
 public class App {
     public static void main(String[] args ) {
-        /*
-        Connection conn = null;
         String url = "jdbc:mysql://localhost:3306/school";
-        try {
-        	conn = DriverManager.getConnection(url, "dev", "dev");
-        	System.out.println("hello I'm in");
-        } catch (SQLException e) {
-        	e.printStackTrace();
-        }
-        */
+        Connection conn = getConnection(url, "dev", "dev");
 
         try {
             System.out.println("Students:");
             getStudents();
             System.out.println("Student:");
             getStudent(1);
-            DBConn.closeConnection();
-            // conn.close();
+            conn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         System.out.println("This is the end");
     }
 
+    public static Connection getConnection(String url, String username, String password) {
+        Connection conn = null;
+        try {
+        	conn = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+        	e.getMessage();
+        }
+        return conn;
+    }
     
     public static void getStudents() throws SQLException {
         String query = "SELECT * FROM students";
-        Statement s = DBConn.conn.createStatement();
-        // Statement s = conn.createStatement();
+        Statement s = conn.createStatement();
         ResultSet rs = s.executeQuery(query);
         
         while(rs.next()) {
@@ -65,7 +64,7 @@ public class App {
 
     public static void getStudent(int id) throws SQLException {
         String query = "SELECT * FROM students WHERE id = ?";
-        PreparedStatement ps = DBConn.conn.prepareStatement(query);
+        PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
